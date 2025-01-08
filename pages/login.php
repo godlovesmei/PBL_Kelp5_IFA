@@ -9,52 +9,60 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Cek di tabel pembeli terlebih dahulu
-    $query_pembeli = "SELECT id_pembeli, username, password FROM pembeli WHERE username = ?";
-    $stmt_pembeli = $koneksi->prepare($query_pembeli);
-    $stmt_pembeli->bind_param("s", $username);
-    $stmt_pembeli->execute();
-    $result_pembeli = $stmt_pembeli->get_result();
-
-    // Jika username ditemukan di tabel pembeli
-    if ($result_pembeli->num_rows > 0) {
-        $row = $result_pembeli->fetch_assoc();
-        if (password_verify($password, $row['password'])) {
-            $_SESSION['username'] = $row['username'];
-            $_SESSION['id_pembeli'] = $row['id_pembeli'];
-            header("Location: \PBL_OKE\pages\home.php");
-            exit();
-        } else {
-            $error_message = "Password salah";
-        }
+    if (checkUser($username, $password, 'pembeli')) {
+        // Jika pengguna adalah pembeli dan login berhasil, arahkan ke halaman home.
+        header("Location: \PBL_OKE\pages\home.php");
+        exit();
+    } elseif (checkUser($username, $password, 'penjual')) {
+        // Jika pengguna adalah penjual dan login berhasil, arahkan ke halaman dashboard penjual.
+        header("Location: \PBL_OKE\admin\dashboard1.php");
+        exit();
     } else {
-        // Jika username tidak ditemukan di pembeli, cek di tabel penjual
-        $query_penjual = "SELECT id_penjual, username, password, role FROM penjual WHERE username = ?";
-        $stmt_penjual = $koneksi->prepare($query_penjual);
-        $stmt_penjual->bind_param("s", $username);
-        $stmt_penjual->execute();
-        $result_penjual = $stmt_penjual->get_result();
+        // Jika username atau password salah.
+        $error_message = "Username atau password salah";
+    }
+}
 
-        if ($result_penjual->num_rows > 0) {
-            $row = $result_penjual->fetch_assoc();
-            if (password_verify($password, $row['password'])) {
-                $_SESSION['username'] = $row['username'];
-                $_SESSION['id_penjual'] = $row['id_penjual'];
+/**
+ * Fungsi untuk memeriksa username dan password di tabel pembeli atau penjual.
+ * 
+ * @param string $username Username yang dimasukkan pengguna.
+ * @param string $password Password yang dimasukkan pengguna.
+ * @param string $role Role pengguna (pembeli atau penjual).
+ * @return bool Mengembalikan true jika login berhasil, false jika gagal.
+ */
+function checkUser($username, $password, $role) {
+    global $koneksi;
+
+    // Menentukan query berdasarkan role pengguna.
+    $query = $role === 'pembeli' ? 
+             "SELECT id_pembeli AS id, username, password FROM pembeli WHERE username = ?" :
+             "SELECT id_penjual AS id, username, password, role FROM penjual WHERE username = ?";
+    
+    // Menyiapkan dan menjalankan query.
+    $stmt = $koneksi->prepare($query);
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if (password_verify($password, $row['password'])) {
+            // Menyimpan informasi pengguna dalam sesi.
+            $_SESSION['username'] = $row['username'];
+            $_SESSION[$role === 'pembeli' ? 'id_pembeli' : 'id_penjual'] = $row['id'];
+            if ($role === 'penjual') {
                 $_SESSION['role'] = $row['role']; // Menyimpan role penjual
-                header("Location: \PBL_OKE\admin\dashboard1.php"); // Halaman khusus penjual
-                exit();
-            } else {
-                $error_message = "Password salah";
             }
-        } else {
-            $error_message = "Username tidak ditemukan";
+            return true;
         }
     }
 
-    $stmt_pembeli->close();
-    $stmt_penjual->close();
+    $stmt->close();
+    return false;
 }
 
+// Menutup koneksi ke database.
 $koneksi->close();
 ?>
 
@@ -83,6 +91,7 @@ $koneksi->close();
         </form>
         <div class="success-message" id="success-message" style="display: none;"> Welcome to PUREBEAUTY!</div>
 
+        <!-- Menampilkan pesan error jika ada. -->
         <?php if (!empty($error_message)): ?>
             <div class="error-message"><?= htmlspecialchars($error_message); ?></div>
         <?php endif; ?>
