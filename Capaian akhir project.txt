@@ -1,0 +1,44 @@
+Aplikasi yang dibangun memiliki fitur-fitur sebagai berikut: 
+
+1. Tampilan Responsif dan User-friendly:
+- Halaman untuk pembeli dan penjual yang berbeda setelah login.
+- Halaman login dan sign-up yang mudah diakses. 
+
+2. Manajemen Akun Pengguna:
+- Fitur login dan sign-up untuk pembeli
+- Fitur change password jika user lupa kata sandi.
+- Sistem validasi untuk memastikan keamanan akun, seperti menggunakan email atau username untuk identifikasi.
+- User bisa melihat, melengkapi, dan mengedit profil.
+
+3. Fitur Jual Beli:
+- Penjual dapat melihat, menambah, mengedit, dan menghapus produk skincare mereka.
+- Penjual dapat mengkonfirmasi atau membatalkan pesanan pembeli.
+- Pembeli dapat melihat produk secara acak di halaman shop.
+- Fungsi pencarian dan filter produk berdasarkan kategori. 
+- Fitur My Cart untuk menyimpan produk sebelum melakukan checkout. 
+- Fitur Checkout untuk memvalidasi detail produk yang akan dibeli.
+- Fitur pembayaran memproses transaksi sehingga menghasilkan invoice.
+- Invoice dapat diunduh dalam format pdf.
+ 
+
+4. Dashboard Penjual:
+- Penjual dapat melihat statistik penjualan dan mengelola produk dengan mudah.
+
+5. Keamanan Data:
+- Pengelolaan data yang aman dengan hashing untuk password.
+- Penggunaan exception handling untuk mencegah crash sistem.
+
+6. Export Data:
+- Data produk bisa diekspor ke dalam format PDF.
+
+7. Integrasi Frontend dan Backend:
+- Frontend menggunakan HTML, CSS, dan JavaScript untuk antarmuka.
+- Backend berbasis PHP untuk logika aplikasi dan pengelolaan data.
+
+8. Database Terstruktur:
+- Database memiliki tabel khusus untuk penjual, pembeli, dan produk. Dengan tabel-tabel lain yang berkaitan dengan proses jual beli; tabel keranjang, tabel pesanan, dan tabel penjualan. 
+
+9. Bonus:
+- Randomized product display untuk memberikan pengalaman berbeda setiap kali pembeli mengunjungi halaman profil.
+- Debug.log untuk memperlihatkan sistem memproses dan memvalidasi jumlah produk untuk diperbarui di keranjang berdasarkan stok yang tersedia.
+
